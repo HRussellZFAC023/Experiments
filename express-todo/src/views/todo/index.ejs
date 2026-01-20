@@ -1,0 +1,53 @@
+<%- include('partials/header') %>
+
+  <main class="app">
+    <header>
+      <h1 class="app__title">Tasks</h1>
+    </header>
+
+    <form method="POST" action="/create" class="app__form">
+      <input type="text" name="text" placeholder="New task" class="app__input" required />
+      <button type="submit" class="app__button">Add</button>
+    </form>
+
+    <ul class="app__list">
+      <% if (items.length===0) { %>
+        <li class="app__empty">No items in the list.</li>
+        <% } else { %>
+          <% items.forEach(item=> { %>
+            <li class="app__item <%= item.completed ? 'app__item--completed' : '' %>">
+              <form action="/update" method="post" class="app__update-form">
+                <input type="hidden" name="id" value="<%= item.id %>" />
+
+                <label class="app__checkbox-label">
+                  <input type="checkbox" name="completed" value="on" <%=item.completed ? 'checked' : '' %>
+                  onchange="this.form.submit()"
+                  />
+                </label>
+
+                <input type="text" name="text" value="<%= item.text %>" class="app__item-input" />
+
+                <button type="submit" class="app__item-btn app__item-btn--save">
+                  Save
+                </button>
+              </form>
+
+              <form action="/delete" method="post" class="app__delete-form">
+                <input type="hidden" name="id" value="<%= item.id %>" />
+                <button type="submit" class="app__item-btn app__item-btn--delete">
+                  Delete
+                </button>
+              </form>
+            </li>
+            <% }) %>
+              <% } %>
+    </ul>
+
+    <footer class="app__footer">
+      <span>
+        <%= new Date().toLocaleDateString('en-US', { month: 'short' , day: 'numeric' }) %>
+      </span>
+    </footer>
+  </main>
+
+  <%- include('partials/footer') %>

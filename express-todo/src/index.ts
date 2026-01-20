@@ -15,6 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// Serve static files (CSS)
+app.use(express.static(path.join(__dirname, "public")));
+
 // Routes
 app.use("/", todoRouter);
 

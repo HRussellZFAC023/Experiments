@@ -1,0 +1,197 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  --bg: #ffffff;
+  --txt: #171717;
+  --muted: #737373;
+  --accent: #171717;
+  --border: #e5e5e5;
+  --radius: 0px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  font-family:
+    "Inter",
+    -apple-system,
+    sans-serif;
+  background: var(--bg);
+  color: var(--txt);
+  padding-top: 10vh;
+}
+
+.app {
+  width: 100%;
+  max-width: 500px;
+  padding: 0 2rem;
+}
+
+.app__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 3rem;
+  color: var(--muted);
+}
+
+.app__form {
+  display: flex;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 3rem;
+  padding-bottom: 0.5rem;
+}
+
+.app__input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 1.25rem;
+  outline: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.app__button {
+  background: none;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 0 0 1rem;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-family: inherit;
+}
+
+.app__button:hover {
+  opacity: 0.5;
+}
+
+.app__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app__item {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.app__update-form {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 1.5rem;
+}
+
+.app__item-input {
+  flex: 1;
+  border: none;
+  background: none;
+  font-size: 1rem;
+  outline: none;
+  color: var(--txt);
+  font-family: inherit;
+}
+
+.app__item-input:focus {
+  color: var(--accent);
+}
+
+.app__checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  appearance: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✕";
+  color: white;
+  font-size: 0.75rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.app__item-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.app__item-btn--save {
+  color: var(--muted);
+  display: none;
+}
+
+.app__item-input:focus ~ .app__item-btn--save,
+.app__item-btn--save:hover {
+  display: inline-block;
+}
+
+.app__item-btn--delete {
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.2s;
+  margin-left: 1rem;
+}
+
+.app__item:hover .app__item-btn--delete {
+  opacity: 1;
+}
+
+.app__item--completed .app__item-input {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.app__delete-form {
+  display: inline;
+}
+
+.app__empty {
+  color: var(--muted);
+  font-size: 0.875rem;
+  padding: 2rem 0;
+}
+
+.app__footer {
+  margin-top: 4rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
