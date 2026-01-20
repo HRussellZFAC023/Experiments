@@ -1,0 +1,69 @@
+{% extends "todo/base.html" %} {% block content %}
+<main class="app">
+  <header>
+    <h1 class="app__title">Tasks</h1>
+  </header>
+
+  <form method="POST" action="{% url 'todo:create' %}" class="app__form">
+    {% csrf_token %}
+    <input
+      type="text"
+      name="text"
+      placeholder="New task"
+      class="app__input"
+      required
+    />
+    <button type="submit" class="app__button">Add</button>
+  </form>
+
+  <ul class="app__list">
+    {% for item in items %}
+    <li
+      class="app__item {% if item.completed %}app__item--completed{% endif %}"
+    >
+      <form
+        action="{% url 'todo:update' %}"
+        method="post"
+        class="app__update-form"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ item.pk }}" />
+
+        <label class="app__checkbox-label">
+          <input type="checkbox" name="completed" value="on" {% if item.completed %}checked{% endif %} onchange="this.form.submit()" />
+        </label>
+
+        <input
+          type="text"
+          name="text"
+          value="{{ item.text }}"
+          class="app__item-input"
+        />
+
+        <button type="submit" class="app__item-btn app__item-btn--save">
+          Save
+        </button>
+      </form>
+
+      <form
+        action="{% url 'todo:delete' %}"
+        method="post"
+        class="app__delete-form"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ item.pk }}" />
+        <button type="submit" class="app__item-btn app__item-btn--delete">
+          Delete
+        </button>
+      </form>
+    </li>
+    {% empty %}
+    <li class="app__empty">No items in the list.</li>
+    {% endfor %}
+  </ul>
+
+  <footer class="app__footer">
+    <span>{% now "M j" %}</span>
+  </footer>
+</main>
+{% endblock %}
