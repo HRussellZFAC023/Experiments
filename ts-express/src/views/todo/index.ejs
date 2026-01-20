@@ -1,0 +1,36 @@
+<%- include('partials/header') %>
+
+  <h1>To Do Items</h1>
+
+  <h2>Create Item</h2>
+  <form action="/create" method="POST">
+    <label for="text">New item:</label>
+    <input type="text" name="text" id="text" />
+    <button type="submit">Add</button>
+  </form>
+
+  <ul>
+    <% if (items.length===0) { %>
+      <li>No items in the list.</li>
+      <% } else { %>
+        <% items.forEach(item=> { %>
+          <li>
+            <form action="/update" method="POST" style="display:inline;">
+              <input type="hidden" name="id" value="<%= item.id %>" />
+              <input type="text" name="text" value="<%= item.text %>" />
+              <label>
+                <input type="checkbox" name="completed" <%=item.completed ? "checked" : "" %> />
+                Completed
+              </label>
+              <button type="submit">Save</button>
+            </form>
+            <form action="/delete" method="POST" style="display:inline;">
+              <input type="hidden" name="id" value="<%= item.id %>" />
+              <button type="submit">Delete</button>
+            </form>
+          </li>
+          <% }) %>
+            <% } %>
+  </ul>
+
+  <%- include('partials/footer') %>
