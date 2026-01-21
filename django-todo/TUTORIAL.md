@@ -1,4 +1,4 @@
-# Chapter 2: Web Development Essentials (Django & Python)
+# Web Development Essentials (Django & Python)
 
 Python is an incredible language. Because of its extensive use in academia, it's possible to find very useful open-source and free libraries. From Numpy and Pandas for data analysis to TensorFlow for machine learning, Python has it all. For web development, Django provides a batteries-included framework that makes building web applications straightforward.
 

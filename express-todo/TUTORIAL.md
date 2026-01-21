@@ -1,4 +1,4 @@
-# Chapter 2: Web Development Essentials (Express & TypeScript)
+# Web Development Essentials (Express & TypeScript)
 
 JavaScript (and by extension TypeScript) is an incredible ecosystem for web development. Thanks to Node.js, we can run JavaScript on the server with access to hundreds of thousands of open-source libraries via npm. Need to build a web server? The Express framework is one of many options. Want to interact with a database? ORMs like TypeORM or query builders like Knex are a click away. The npm registry hosts packages for just about anything – from parsing XML and sending emails to building machine learning models with TensorFlow.js.
 

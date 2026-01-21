@@ -1,4 +1,4 @@
-# Chapter 2: Web Development Essentials (Next.js & React Server Components)
+# Web Development Essentials (Next.js & React Server Components)
 
 Next.js is a powerful React framework that enables you to build full-stack web applications with ease. With the introduction of the App Router and React Server Components in Next.js 13+, the framework has evolved to provide an even more streamlined development experience that blurs the line between frontend and backend.
 
@@ -146,7 +146,7 @@ const DB_PATH = "./data/database.db";
 const sqlite = new Database(DB_PATH);
 
 // Enable WAL mode for better performance
-sqlite.pragma("journal_mode = WAL"); // wal = write ahead logging this means that the database is written to a temporary file first and then the temporary file is copied to the main database file. 
+sqlite.pragma("journal_mode = WAL"); // wal = write ahead logging this means that the database is written to a temporary file first and then the temporary file is copied to the main database file.
 
 // Create table if it doesn't exist
 sqlite.exec(`
