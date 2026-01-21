@@ -84,7 +84,8 @@ function formatDate(): string {
  * All forms use Server Actions for data mutations.
  */
 export default async function HomePage() {
-  // Direct database query in Server Component
+  // Direct database query in Server Component.
+  // Note: No API call needed! We just call the function.
   const items = await getItems();
 
   return (
@@ -95,6 +96,7 @@ export default async function HomePage() {
       </header>
 
       {/* Create Form */}
+      {/* The form action is directly bound to the Server Action function */}
       <form action={createItem} className="app__form">
         <input
           type="text"
@@ -125,6 +127,11 @@ export default async function HomePage() {
                 <input type="hidden" name="id" value={item.id} />
 
                 <label className="app__checkbox-label">
+                  {/*
+                    We use a Client Component for the checkbox because:
+                    1. We want auto-submit behavior (onChange).
+                    2. Server Components don't support event handlers like onChange.
+                  */}
                   <AutoSubmitCheckbox
                     name="completed"
                     defaultChecked={item.completed}

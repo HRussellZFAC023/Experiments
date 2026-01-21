@@ -2,88 +2,31 @@
 Todo Views (Controllers)
 ========================
 
-This module defines the view functions that handle HTTP requests and return responses.
+This module handles the application logic by processing HTTP requests and returning responses.
 
-Django MVC Pattern - The "V" (View/Controller)
-----------------------------------------------
-In Django's interpretation of MVC:
-  - **Model**: Defines data structure (models.py)
-  - **View**: Handles HTTP requests and returns responses (THIS FILE)
-  - **Template**: Renders HTML using context data (templates/*.html)
+Django MVC Pattern - The "V" (View)
+-----------------------------------
+In Django, "Views" are what traditional MVC frameworks call "Controllers".
+They handle the "C" in MVC:
+  1. Receive an HTTP Request (`request`).
+  2. Implement business logic (e.g., getting data from the Model).
+  3. Return an HTTP Response (usually by rendering a Template).
 
-Django views act as "controllers" in traditional MVC terminology.
-They:
-  1. Receive HTTP requests (GET, POST, etc.)
-  2. Interact with models to query/modify data
-  3. Return HTTP responses (rendered templates, redirects, JSON, etc.)
-
-Request/Response Cycle
+Request-Response Cycle
 ----------------------
-1. User makes HTTP request → Django URL dispatcher
-2. URL dispatcher matches path → calls view function
-3. View function receives HttpRequest object
-4. View queries/modifies database via models
-5. View returns HttpResponse (rendered template or redirect)
-6. Response sent back to user's browser
+1. User visits a URL (e.g., `/create`).
+2. Django's URL dispatcher matches the URL to a view function (e.g., `create`).
+3. The view function is called with the `request` object.
+4. The view does its work (queries DB, validates form data).
+5. The view returns a `HttpResponse` (or a subclass like `HttpResponseRedirect`).
 
-Key Django Imports Used
------------------------
-- HttpRequest: Incoming request object with:
-    - request.method: 'GET', 'POST', etc.
-    - request.GET: Query parameters dictionary
-    - request.POST: Form data dictionary
-    - request.user: Current user (if authenticated)
-
-- HttpResponse: Outgoing response object with:
-    - status_code: HTTP status (200, 301, 404, etc.)
-    - content: Response body
-    - headers: HTTP headers
-
-- render(): Shortcut that:
-    1. Loads a template file
-    2. Renders it with context data
-    3. Returns HttpResponse with the HTML
-
-- redirect(): Shortcut that:
-    1. Creates HttpResponse with status 302
-    2. Sets Location header to target URL
-    - Can accept URL name (e.g., "todo:list") or path ("/")
-
-- get_object_or_404(): Shortcut that:
-    1. Queries the model
-    2. Returns object if found
-    3. Raises Http404 if not found
-
-URL Name Resolution
--------------------
-Django uses named URLs for flexibility. Instead of hardcoding paths:
-    return redirect("/")  # Brittle - breaks if URL changes
-
-We use URL names:
-    return redirect("todo:list")  # Robust - works even if path changes
-
-The "todo:list" format is:
-    - "todo": The app namespace (defined in website/urls.py)
-    - "list": The URL name (defined in todo/urls.py)
-
-Form Data Handling
-------------------
-HTML forms send data based on input name attributes:
-    <input name="text" value="Buy groceries">
-
-In the view, access it via:
-    request.POST.get("text")  # Returns "Buy groceries" or None
-    request.POST["text"]      # Returns "Buy groceries" or raises KeyError
-
-Checkbox Behavior (IMPORTANT):
-    - Checked: Sends the field (completed="on")
-    - Unchecked: Does NOT send the field at all!
-
-    Therefore, to detect unchecked:
-        item.completed = "completed" in request.POST
-    NOT:
-        item.completed = request.POST.get("completed") == "on"
-    (The latter works for checking, but the former handles both cases)
+Key Concepts
+------------
+- **HttpRequest**: Object containing metadata about the request (method, POST data, etc.).
+- **HttpResponse**: Object containing the content to send back to the user.
+- **render()**: Helper that loads a template context and returns an HttpResponse.
+- **redirect()**: Helper that returns a 302/301 redirect response.
+- **get_object_or_404**: Helper that tries to get an object or raises a 404 error if not found.
 """
 
 from django.http import HttpRequest, HttpResponse
@@ -94,97 +37,117 @@ from todo.models import ToDoItem
 
 def index(request: HttpRequest) -> HttpResponse:
     """
-    List all to-do items (READ operation).
+    Display the main page with a list of to-do items.
 
-    HTTP Method: GET
-    URL: / (named "todo:list")
-    Template: todo/index.html
+    Logic:
+      1. Fetch all items from the database, ordered by creation date (newest first).
+      2. Pass these items to the template context.
+      3. Render the 'todo/index.html' template.
 
-    Context:
-        items (QuerySet): All ToDoItem objects, newest first
+    Args:
+        request: The incoming HTTP request.
 
     Returns:
-        HttpResponse: Rendered HTML page with item list
+        HttpResponse: The rendered HTML page.
     """
+    # Query the database using the Django ORM.
+    # The "-" prefix in "-created_on" indicates descending order.
     items = ToDoItem.objects.order_by("-created_on")
+
+    # The context dictionary makes data available to the template.
+    # Keys in this dictionary become variable names in the template (e.g., {{ items }}).
     context = {"items": items}
+
     return render(request, "todo/index.html", context)
 
 
 def create(request: HttpRequest) -> HttpResponse:
     """
-    Create a new to-do item (CREATE operation).
+    Handle the creation of a new to-do item.
 
-    HTTP Method: POST
-    URL: /create (named "todo:create")
+    Expected Method: POST
+    Form Data: 'text' (the task description)
 
-    Expected POST data:
-        text (str): The task description (required)
+    Logic:
+      1. Extract the 'text' from the POST data.
+      2. Create a new ToDoItem object.
+      3. Save it to the database.
+      4. Redirect back to the index page to show the updated list.
 
-    Returns:
-        HttpResponseRedirect: Redirects to list view on success
+    Note: We rely on the View to act as the "Controller" here, mediating between
+    the user's input (POST data) and the Model (database).
     """
-    item = ToDoItem(text=request.POST["text"])
-    item.completed = False
+    # Access POST data dictionary-like.
+    # In a real app, we would use Django Forms for robust validation.
+    # Here, we do manually for simplicity/demonstration.
+    new_text = request.POST["text"]
+
+    # Create an instance and save it in one step (optional, can also be done separately).
+    item = ToDoItem(text=new_text)
+    item.completed = False  # Explicitly set default (though model handles this too)
     item.save()
+
+    # Always redirect after a successful POST to prevent "double submission"
+    # if the user refreshes the page (Post/Redirect/Get pattern).
     return redirect("todo:list")
 
 
 def delete(request: HttpRequest) -> HttpResponse:
     """
-    Delete a to-do item (DELETE operation).
+    Delete a specific to-do item.
 
-    HTTP Method: POST
-    URL: /delete (named "todo:delete")
+    Expected Method: POST
+    Form Data: 'id' (the primary key of the item to delete)
 
-    Expected POST data:
-        id (int): Primary key of item to delete
-
-    Returns:
-        HttpResponseRedirect: Redirects to list view
-
-    Note:
-        We use filter().delete() instead of get().delete() because
-        filter() doesn't raise an exception if the item doesn't exist.
-        This makes the operation idempotent.
+    Logic:
+      1. Get the ID from the POST data.
+      2. Try to find the item and delete it.
+      3. Redirect back to the index view.
     """
-    ToDoItem.objects.filter(pk=request.POST["id"]).delete()
+    item_id = request.POST["id"]
+
+    # We use filter().delete() which is efficient and safe.
+    # If the item doesn't exist, it does nothing (no error raised).
+    # Equivalent to: DELETE FROM todo_todoitem WHERE id = item_id;
+    ToDoItem.objects.filter(pk=item_id).delete()
+
     return redirect("todo:list")
 
 
 def update(request: HttpRequest) -> HttpResponse:
     """
-    Update an existing to-do item (UPDATE operation).
+    Update an existing item's status or text.
 
-    HTTP Method: POST
-    URL: /update (named "todo:update")
+    Expected Method: POST
+    Form Data:
+      - 'id': Primary key of the item.
+      - 'text': (Optional) Updated text.
+      - 'completed': 'on' if checked, missing if unchecked.
 
-    Expected POST data:
-        id (int): Primary key of item to update
-        text (str): New task description
-        completed (str, optional): "on" if checkbox is checked
-
-    Returns:
-        HttpResponseRedirect: Redirects to list view
-
-    Important - Checkbox Handling:
-        HTML checkboxes do NOT send a value when unchecked.
-        We must check for the KEY's existence, not its value:
-
-            item.completed = "completed" in request.POST
-
-        This evaluates to:
-            - True if the checkbox was checked (key exists)
-            - False if the checkbox was unchecked (key missing)
+    Logic:
+      1. Retrieve the item by ID. Raise 404 if not found.
+      2. Update the 'completed' status based on the presence of the form key.
+      3. Update the 'text' if provided.
+      4. Save the changes.
+      5. Redirect.
     """
     if request.method == "POST":
         item_id = request.POST.get("id")
+
+        # `get_object_or_404` is a safer alternative to `ToDoItem.objects.get()`.
+        # It handles the DoesNotExist exception by returning a standard 404 page.
         item = get_object_or_404(ToDoItem, pk=item_id)
 
-        # In HTML, if a checkbox is unchecked, it isn't sent in the POST data.
-        # So we check for the presence of the key.
+        # Checkbox Handling Explanation:
+        # Standard HTML checkboxes only send their value (usually "on") if checked.
+        # If unchecked, the browser does NOT send the key at all.
+        # So we check checks for the *existence* of the "completed" key in request.POST.
         item.completed = "completed" in request.POST
+
+        # We update text if it's there, otherwise keep existing text using `.get()` default.
         item.text = request.POST.get("text", item.text)
+
         item.save()
 
     return redirect("todo:list")
+

@@ -81,6 +81,8 @@ import { eq, desc } from "drizzle-orm";
  * @returns Array of todo items ordered by creation date (newest first)
  */
 export async function getItems() {
+  // Using Drizzle ORM to build a typesafe SQL query.
+  // SELECT * FROM todo_items ORDER BY created_on DESC;
   return db.select().from(todoItems).orderBy(desc(todoItems.createdOn)).all();
 }
 
@@ -99,9 +101,11 @@ export async function createItem(formData: FormData) {
     return; // Silently ignore empty submissions
   }
 
+  // Insert into database
   db.insert(todoItems).values({ text: text.trim() }).run();
 
-  // Revalidate the home page to show the new item
+  // Revalidate the home page to show the new item.
+  // This tells Next.js to clear the cache for this path and re-render.
   revalidatePath("/");
 }
 
@@ -124,6 +128,7 @@ export async function updateItem(formData: FormData) {
   const text = (formData.get("text") as string)?.trim() || "";
 
   // Checkbox sends "on" when checked, null when unchecked
+  // This logic is identical to Django's item.completed = "completed" in request.POST
   const completed = formData.get("completed") === "on";
 
   db.update(todoItems)
