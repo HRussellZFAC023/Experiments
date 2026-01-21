@@ -204,10 +204,10 @@ const completed = formData.get("completed") === "on";
 
 > "Quick comparison of template syntax:"
 
-| Django                    | Express                    | Next.js            |
-| ------------------------- | -------------------------- | ------------------ |
-| `{{ item.text }}`         | `<%= item.text %>`         | `{item.text}`      |
-| `{% for item in items %}` | `<% items.forEach(...) %>` | `{items.map(...)}` |
+| Django                                         | Express                    | Next.js            |
+| ---------------------------------------------- | -------------------------- | ------------------ |
+| `{{ item.text }}`                              | `<%= item.text %>`         | `{item.text}`      |
+| `{% raw %}{% for item in items %}{% endraw %}` | `<% items.forEach(...) %>` | `{items.map(...)}` |
 
 > "Different syntax, same job. Django and Express use server templates. Next.js uses React components that can also run on the server."
 
@@ -344,16 +344,16 @@ src/app/page.tsx             # React Server Component
 
 ## Appendix: Key Differences Summary
 
-| Aspect                | Django                | Express           | Next.js           |
-| --------------------- | --------------------- | ----------------- | ----------------- |
-| **Language**          | Python                | TypeScript        | TypeScript        |
-| **ORM**               | Django ORM            | TypeORM           | Drizzle           |
-| **View Engine**       | Django Templates      | EJS               | React Components  |
-| **Routing**           | urls.py               | Express Router    | File-based (app/) |
-| **CSRF**              | `{% csrf_token %}`    | Manual / csurf    | Automatic         |
-| **Testing**           | TestCase              | Jest + SuperTest  | Jest              |
-| **Project Structure** | Enforced by framework | You decide        | Enforced (app/)   |
-| **Philosophy**        | Batteries-included    | Minimal, flexible | Full-stack React  |
+| Aspect                | Django                                  | Express           | Next.js           |
+| --------------------- | --------------------------------------- | ----------------- | ----------------- |
+| **Language**          | Python                                  | TypeScript        | TypeScript        |
+| **ORM**               | Django ORM                              | TypeORM           | Drizzle           |
+| **View Engine**       | Django Templates                        | EJS               | React Components  |
+| **Routing**           | urls.py                                 | Express Router    | File-based (app/) |
+| **CSRF**              | `{% raw %}{% csrf_token %}{% endraw %}` | Manual / csurf    | Automatic         |
+| **Testing**           | TestCase                                | Jest + SuperTest  | Jest              |
+| **Project Structure** | Enforced by framework                   | You decide        | Enforced (app/)   |
+| **Philosophy**        | Batteries-included                      | Minimal, flexible | Full-stack React  |
 
 ---
 
