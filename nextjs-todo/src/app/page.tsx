@@ -61,6 +61,7 @@
  */
 
 import { getItems, createItem, updateItem, deleteItem } from "./actions";
+import { AutoSubmitCheckbox } from "./components/AutoSubmitCheckbox";
 
 /**
  * Format date for display in footer.
@@ -124,14 +125,9 @@ export default async function HomePage() {
                 <input type="hidden" name="id" value={item.id} />
 
                 <label className="app__checkbox-label">
-                  <input
-                    type="checkbox"
+                  <AutoSubmitCheckbox
                     name="completed"
-                    value="on"
                     defaultChecked={item.completed}
-                    // Note: onChange with Server Components requires a Client Component
-                    // For auto-submit, we'd need to wrap this in a Client Component
-                    // For now, user clicks "Save" button
                   />
                 </label>
 
