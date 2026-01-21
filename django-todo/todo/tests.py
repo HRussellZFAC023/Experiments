@@ -16,6 +16,8 @@ Running Tests:
   python manage.py test todo          # Run all tests in the todo app
   python manage.py test todo.tests.ToDoModelTest  # Run specific test class
   python manage.py test --keepdb      # Reuse test database for speed
+
+cspell:ignore keepdb
 """
 
 from django.test import TestCase
@@ -143,7 +145,9 @@ class ToDoViewTest(TestCase):
 
         items = ToDoItem.objects.all()
         self.assertEqual(items.count(), 1)
-        self.assertEqual(items.first().text, "Brand new item")
+        first_item = items.first()
+        assert first_item is not None
+        self.assertEqual(first_item.text, "Brand new item")
 
     def test_create_view_redirects_to_list(self):
         """POST /create should redirect to the list view."""
@@ -157,6 +161,7 @@ class ToDoViewTest(TestCase):
         self.client.post(url, {"text": "New item"})
 
         item = ToDoItem.objects.first()
+        assert item is not None
         self.assertFalse(item.completed)
 
     # -------------------------------------------------------------------------
@@ -167,7 +172,7 @@ class ToDoViewTest(TestCase):
         item = ToDoItem.objects.create(text="Original", completed=False)
         url = reverse("todo:update")
 
-        self.client.post(url, {"id": item.id, "text": "Modified"})
+        self.client.post(url, {"id": item.pk, "text": "Modified"})
 
         item.refresh_from_db()
         self.assertEqual(item.text, "Modified")
@@ -177,7 +182,7 @@ class ToDoViewTest(TestCase):
         item = ToDoItem.objects.create(text="Task", completed=False)
         url = reverse("todo:update")
 
-        self.client.post(url, {"id": item.id, "text": "Task", "completed": "on"})
+        self.client.post(url, {"id": item.pk, "text": "Task", "completed": "on"})
 
         item.refresh_from_db()
         self.assertTrue(item.completed)
@@ -194,7 +199,7 @@ class ToDoViewTest(TestCase):
         url = reverse("todo:update")
 
         # Omit 'completed' from POST data (simulates unchecked checkbox)
-        self.client.post(url, {"id": item.id, "text": "Done task"})
+        self.client.post(url, {"id": item.pk, "text": "Done task"})
 
         item.refresh_from_db()
         self.assertFalse(item.completed, "Item should be unchecked")
@@ -204,7 +209,7 @@ class ToDoViewTest(TestCase):
         item = ToDoItem.objects.create(text="Task", completed=False)
         url = reverse("todo:update")
 
-        response = self.client.post(url, {"id": item.id, "text": "Task"})
+        response = self.client.post(url, {"id": item.pk, "text": "Task"})
 
         self.assertRedirects(response, reverse("todo:list"))
 
@@ -216,7 +221,7 @@ class ToDoViewTest(TestCase):
         item = ToDoItem.objects.create(text="Delete me", completed=False)
         url = reverse("todo:delete")
 
-        self.client.post(url, {"id": item.id})
+        self.client.post(url, {"id": item.pk})
 
         self.assertEqual(ToDoItem.objects.count(), 0)
 
@@ -225,7 +230,7 @@ class ToDoViewTest(TestCase):
         item = ToDoItem.objects.create(text="Delete me", completed=False)
         url = reverse("todo:delete")
 
-        response = self.client.post(url, {"id": item.id})
+        response = self.client.post(url, {"id": item.pk})
 
         self.assertRedirects(response, reverse("todo:list"))
 
