@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MVC Pattern: 3 Frameworks, 1 App | Lightning Talk</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/theme/black.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/monokai.css"
+    />
+    <style>
+      :root {
+        --r-heading-font: "Inter", -apple-system, sans-serif;
+        --r-main-font: "Inter", -apple-system, sans-serif;
+        --r-code-font: "Fira Code", monospace;
+      }
+      .reveal h1,
+      .reveal h2,
+      .reveal h3 {
+        text-transform: none;
+      }
+      .reveal pre {
+        font-size: 0.55em;
+        width: 100%;
+      }
+      .reveal pre code {
+        max-height: 500px;
+      }
+      .reveal table {
+        font-size: 0.7em;
+      }
+      .reveal .small {
+        font-size: 0.6em;
+      }
+      .reveal .highlight {
+        color: #42affa;
+      }
+      .columns {
+        display: flex;
+        gap: 2rem;
+      }
+      .columns > * {
+        flex: 1;
+      }
+      .framework-badge {
+        display: inline-block;
+        padding: 0.3em 0.8em;
+        border-radius: 4px;
+        font-weight: bold;
+        margin: 0.2em;
+      }
+      .django {
+        background: #092e20;
+        color: #44b78b;
+      }
+      .express {
+        background: #000;
+        color: #fff;
+        border: 2px solid #fff;
+      }
+      .nextjs {
+        background: #000;
+        color: #fff;
+      }
+      .reveal .slides section {
+        text-align: left;
+      }
+      .reveal .slides section.center {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- Title Slide -->
+        <section class="center">
+          <h1>MVC Pattern</h1>
+          <h3>3 Frameworks, 1 App</h3>
+          <p class="small" style="margin-top: 2em">
+            <span class="framework-badge django">Django</span>
+            <span class="framework-badge express">Express</span>
+            <span class="framework-badge nextjs">Next.js</span>
+          </p>
+          <p class="small" style="margin-top: 2em">Henry Russell</p>
+        </section>
+
+        <!-- Why This Talk -->
+        <section>
+          <h2>The Experiment 🧪</h2>
+          <p>
+            Build the <strong>same todo app</strong> in 3 different frameworks:
+          </p>
+          <ul>
+            <li>
+              <strong>Django</strong> - Python's batteries-included framework
+            </li>
+            <li><strong>Express</strong> - Node.js minimal framework</li>
+            <li><strong>Next.js</strong> - React with Server Components</li>
+          </ul>
+          <p class="fragment" style="margin-top: 1em">
+            <em
+              >Goal: Understand the MVC pattern and how different frameworks
+              implement it</em
+            >
+          </p>
+        </section>
+
+        <!-- What is MVC -->
+        <section>
+          <h2>What is MVC? 🏗️</h2>
+          <div class="columns">
+            <div>
+              <p><strong>Model</strong></p>
+              <p class="small">Data structure & database</p>
+            </div>
+            <div>
+              <p><strong>View</strong></p>
+              <p class="small">What the user sees</p>
+            </div>
+            <div>
+              <p><strong>Controller</strong></p>
+              <p class="small">Handles requests & logic</p>
+            </div>
+          </div>
+          <p class="fragment" style="margin-top: 1.5em">
+            <em
+              >Django calls it MTV (Model-Template-View) but it's the same
+              idea!</em
+            >
+          </p>
+        </section>
+
+        <!-- The App -->
+        <section>
+          <h2>The App: Todo List ✅</h2>
+          <ul>
+            <li>Create tasks</li>
+            <li>Mark as complete</li>
+            <li>Edit task text</li>
+            <li>Delete tasks</li>
+          </ul>
+          <p class="fragment" style="margin-top: 1em">
+            Classic <strong>CRUD</strong> operations
+          </p>
+        </section>
+
+        <!-- MVC Comparison Table -->
+        <section>
+          <h2>MVC Across Frameworks</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Layer</th>
+                <th>Django</th>
+                <th>Express</th>
+                <th>Next.js</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Model</strong></td>
+                <td>Django ORM</td>
+                <td>TypeORM</td>
+                <td>Drizzle ORM</td>
+              </tr>
+              <tr>
+                <td><strong>View</strong></td>
+                <td>Templates (.html)</td>
+                <td>EJS (.ejs)</td>
+                <td>React Components</td>
+              </tr>
+              <tr>
+                <td><strong>Controller</strong></td>
+                <td>views.py</td>
+                <td>routes/*.ts</td>
+                <td>Server Actions</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Model: Django -->
+        <section>
+          <h2><span class="framework-badge django">Django</span> Model</h2>
+          <pre><code class="language-python">class ToDoItem(models.Model):
+    text = models.CharField(max_length=255)
+    created_on = models.DateTimeField(auto_now_add=True)
+    completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.text</code></pre>
+          <p class="small fragment">
+            ✨ Schema = Model definition. Migrations generated automatically.
+          </p>
+        </section>
+
+        <!-- Model: Express -->
+        <section>
+          <h2><span class="framework-badge express">Express</span> Model</h2>
+          <pre><code class="language-typescript">@Entity()
+export class ToDoItem extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
+
+  @Column({ length: 100 })
+  text!: string;
+
+  @CreateDateColumn()
+  createdOn!: Date;
+
+  @Column({ default: false })
+  completed!: boolean;
+}</code></pre>
+          <p class="small fragment">
+            ✨ TypeORM decorators. Active Record pattern -
+            <code>item.save()</code>
+          </p>
+        </section>
+
+        <!-- Model: Next.js -->
+        <section>
+          <h2><span class="framework-badge nextjs">Next.js</span> Model</h2>
+          <pre><code class="language-typescript">export const todoItems = sqliteTable("todo_items", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  text: text("text").notNull(),
+  createdOn: text("created_on")
+    .notNull()
+    .$defaultFn(() => new Date().toISOString()),
+  completed: integer("completed", { mode: "boolean" })
+    .notNull()
+    .default(false),
+});</code></pre>
+          <p class="small fragment">
+            ✨ Drizzle ORM. Type-safe queries. No decorators.
+          </p>
+        </section>
+
+        <!-- Controller: Django -->
+        <section>
+          <h2><span class="framework-badge django">Django</span> Controller</h2>
+          <pre><code class="language-python">def create(request):
+    text = request.POST.get("text", "").strip()
+    if text:
+        ToDoItem.objects.create(text=text, completed=False)
+    return redirect("todo:list")
+
+def delete(request):
+    item_id = request.POST.get("id")
+    ToDoItem.objects.filter(pk=item_id).delete()
+    return redirect("todo:list")</code></pre>
+          <p class="small fragment">
+            ✨ URL routing via <code>urls.py</code>. CSRF token required.
+          </p>
+        </section>
+
+        <!-- Controller: Express -->
+        <section>
+          <h2>
+            <span class="framework-badge express">Express</span> Controller
+          </h2>
+          <pre><code class="language-typescript">router.post("/create", async (req, res) => {
+  const text = req.body.text;
+  if (!text || text.trim() === "") return res.redirect("/");
+
+  const item = new ToDoItem();
+  item.text = text;
+  item.completed = false;
+  await item.save();
+  res.redirect("/");
+});
+
+router.post("/delete", async (req, res) => {
+  const id = parseInt(req.body.id);
+  await ToDoItem.delete({ id });
+  res.redirect("/");
+});</code></pre>
+        </section>
+
+        <!-- Controller: Next.js -->
+        <section>
+          <h2>
+            <span class="framework-badge nextjs">Next.js</span> Controller
+          </h2>
+          <pre><code class="language-typescript">"use server";
+
+export async function createItem(formData: FormData) {
+  const text = formData.get("text") as string;
+  if (!text?.trim()) return;
+
+  db.insert(todoItems).values({ text: text.trim() }).run();
+  revalidatePath("/");
+}
+
+export async function deleteItem(formData: FormData) {
+  const id = Number(formData.get("id"));
+  db.delete(todoItems).where(eq(todoItems.id, id)).run();
+  revalidatePath("/");
+}</code></pre>
+          <p class="small fragment">
+            ✨ Server Actions. No API routes. Auto CSRF protection.
+          </p>
+        </section>
+
+        <!-- View: All Three -->
+        <section>
+          <h2>Views: Template Syntax</h2>
+          <div class="columns">
+            <div>
+              <p
+                class="framework-badge django"
+                style="display: block; text-align: center"
+              >
+                Django
+              </p>
+              <pre><code class="small">{% for item in items %}
+  {{ item.text }}
+{% empty %}
+  No items.
+{% endfor %}</code></pre>
+            </div>
+            <div>
+              <p
+                class="framework-badge express"
+                style="display: block; text-align: center"
+              >
+                Express
+              </p>
+              <pre><code class="small"><% items.forEach(item => { %>
+  <%= item.text %>
+<% }) %></code></pre>
+            </div>
+            <div>
+              <p
+                class="framework-badge nextjs"
+                style="display: block; text-align: center"
+              >
+                Next.js
+              </p>
+              <pre><code class="small">{items.map(item => (
+  <li key={item.id}>
+    {item.text}
+  </li>
+))}</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Key Insight: Checkbox -->
+        <section>
+          <h2>🤯 Fun Fact: Checkboxes</h2>
+          <p>HTML checkboxes send <code>"on"</code> when checked...</p>
+          <p class="fragment">
+            <strong>...and NOTHING when unchecked!</strong>
+          </p>
+          <pre class="fragment"><code class="language-python"># Django
+completed = request.POST.get("completed") == "on"</code></pre>
+          <pre
+            class="fragment"
+          ><code class="language-typescript">// Express & Next.js
+const completed = formData.get("completed") === "on";</code></pre>
+          <p class="fragment small">Same gotcha in all three frameworks! 🎯</p>
+        </section>
+
+        <!-- Testing -->
+        <section>
+          <h2>Testing 🧪</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Framework</th>
+                <th>Test Tool</th>
+                <th>Key Feature</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Django</td>
+                <td>Django TestCase</td>
+                <td>Auto test database</td>
+              </tr>
+              <tr>
+                <td>Express</td>
+                <td>Jest + SuperTest</td>
+                <td>HTTP simulation</td>
+              </tr>
+              <tr>
+                <td>Next.js</td>
+                <td>Jest</td>
+                <td>Database tests</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="fragment small" style="margin-top: 1em">
+            All run without starting a real server!
+          </p>
+        </section>
+
+        <!-- What I Learned -->
+        <section>
+          <h2>Key Takeaways 💡</h2>
+          <ul>
+            <li class="fragment">
+              <strong>MVC is universal</strong> - Same pattern, different syntax
+            </li>
+            <li class="fragment">
+              <strong>Django is batteries-included</strong> - ORM, admin, auth
+              built-in
+            </li>
+            <li class="fragment">
+              <strong>Express is minimal</strong> - You choose everything
+            </li>
+            <li class="fragment">
+              <strong>Next.js is the future?</strong> - Server Components = no
+              API routes
+            </li>
+            <li class="fragment">
+              <strong>Project structure matters</strong> - Django enforces it,
+              others don't
+            </li>
+          </ul>
+        </section>
+
+        <!-- Relevance to Work -->
+        <section>
+          <h2>Why This Matters 🎯</h2>
+          <ul>
+            <li class="fragment">Next.js potential for future projects</li>
+            <li class="fragment">
+              Understanding patterns helps switching frameworks
+            </li>
+            <li class="fragment">React Server Components are game-changing</li>
+            <li class="fragment">Same tests, different tools</li>
+          </ul>
+        </section>
+
+        <!-- Links -->
+        <section class="center">
+          <h2>Resources 📚</h2>
+          <p>
+            <a href="https://github.com/HRussellZFAC023/Experiments"
+              >github.com/HRussellZFAC023/Experiments</a
+            >
+          </p>
+          <p class="small" style="margin-top: 1em">
+            Each folder has a <code>TUTORIAL.md</code> with full walkthrough
+          </p>
+          <p class="small" style="margin-top: 2em">
+            Inspired by:
+            <a
+              href="https://diegojancic.com/blog/serverless-python-aws-lambda-book"
+              >diegojancic.com/blog/serverless-python-aws-lambda-book</a
+            >
+          </p>
+        </section>
+
+        <!-- Questions -->
+        <section class="center">
+          <h1>Questions? 🤔</h1>
+          <p style="margin-top: 2em">
+            <span class="framework-badge django">Django</span>
+            <span class="framework-badge express">Express</span>
+            <span class="framework-badge nextjs">Next.js</span>
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.0/plugin/highlight/highlight.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: true,
+        plugins: [RevealHighlight],
+        transition: "slide",
+        center: false,
+      });
+    </script>
+  </body>
+</html>
